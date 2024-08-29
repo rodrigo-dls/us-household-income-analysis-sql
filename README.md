@@ -132,3 +132,107 @@ WHERE ALand = 0
 #### Explanation
 
 In this step, I first checked for potential errors in the `AWater` column, such as empty strings, zero values, or `NULL` entries. After identifying the distinct values, I ran a query to ensure there were no cases where both the `ALand` and `AWater` columns had a value of zero, confirming data integrity in those fields.
+
+## Phase 2: Exploratory Data Analysis (EDA)
+
+Once the data cleaning was complete, the next step was to perform *Exploratory Data Analysis (EDA)*. EDA is crucial to understand the dataset, reveal trends, and extract insights related to household income distribution across different states and counties. In this phase, SQL queries were used to explore key aspects such as geographic size, income levels, and income disparities. Here are four key analyses from the EDA phase:
+
+### Example 1: Top 10 Largest States by Area
+
+The first step in the analysis was to examine the largest states by total area (land and water). This allows us to see the geographical distribution across the United States.
+
+```sql
+-- Top 10 largest States
+SELECT State_Name, SUM(ALand) + SUM(AWater) Total_area, SUM(ALand) Land_area, SUM(AWater) Water_Area
+FROM USHouseholdIncome
+GROUP BY State_Name
+ORDER BY 2 DESC
+LIMIT 10;
+```
+
+#### Explanation
+
+This query calculates the total area for each state by summing the land (`ALand`) and water (`AWater`) areas. It then groups the results by state and orders them by the largest area first. This provides a clear view of the states with the most geographical space, giving insight into how geography might influence economic factors like income distribution.
+
+---
+
+### Example 2: Top 10 States with the Highest Average Income
+
+Next, we calculated the top 10 states with the highest average income, which helps to understand the economic standing of various states.
+
+```sql
+-- Top 10 States with the highest average Income
+SELECT u.State_Name, ROUND(AVG(Mean),1) Mean, ROUND(AVG(Median),1) Median
+FROM USHouseholdIncome u
+JOIN ushouseholdincome_statistics us
+    ON u.id = us.id
+WHERE Mean <> 0
+GROUP BY u.State_Name
+ORDER BY 2 DESC
+LIMIT 10;
+```
+
+#### Explanation
+
+This query joins the `USHouseholdIncome` and `USHouseholdIncomeStatistics` tables to calculate the average (`AVG()`) mean and median incomes for each state. It excludes states where the mean income is zero and returns the top 10 states with the highest average incomes. This analysis is critical for understanding income distribution and identifying the wealthiest regions.
+
+---
+
+### Example 3: Top 5 Highest and Lowest Average County Incomes in New Jersey
+
+To further explore income distribution, we analyzed the counties in New Jersey with the highest and lowest average incomes. This provides a more granular view of income disparities within a single state.
+
+```sql
+-- Look at the top 5 highest and lowest average county incomes in New Jersey
+SELECT *
+FROM (SELECT u.County, ROUND(AVG(us.Mean),1) Mean -- highest income
+    FROM USHouseholdIncome u
+    JOIN ushouseholdincome_statistics us
+        ON u.id = us.id
+    WHERE u.State_Name LIKE 'New Jersey'
+    AND Mean <> 0
+    GROUP BY u.County
+    ORDER BY 2 DESC
+    LIMIT 5) highest_income
+UNION
+SELECT *
+FROM (SELECT u.County, ROUND(AVG(us.Mean),1) Mean -- lowest income
+    FROM USHouseholdIncome u
+    JOIN ushouseholdincome_statistics us
+        ON u.id = us.id
+    WHERE u.State_Name LIKE 'New Jersey'
+    AND Mean <> 0
+    GROUP BY u.County
+    ORDER BY 2 ASC
+    LIMIT 5) lowest_income
+ORDER BY 2 DESC;
+```
+
+#### Explanation
+
+This query uses `UNION` to combine two sets of data: the top 5 counties in New Jersey with the highest average income and the 5 counties with the lowest. This gives a comprehensive overview of income extremes within a specific state. The use of subqueries and `JOINs` demonstrates advanced SQL capabilities, making it a strong example of handling complex queries.
+
+---
+
+### Example 4: Average Number of Counties per State
+
+Finally, we looked at the average number of counties per state, which helps us understand the typical administrative divisions across states.
+
+```sql
+-- Average number of counties per state
+SELECT ROUND(AVG(num_count),1) avg_counties_per_state
+FROM (SELECT State_Name, COUNT(DISTINCT(County)) num_count
+    FROM USHouseholdIncome
+    GROUP BY State_Name) num_count;
+```
+
+#### Explanation
+
+This query calculates the average number of counties per state by first grouping the data by state and counting distinct counties. Then, it uses `AVG()` to calculate the overall average across all states. This analysis provides context on the geographic breakdown of the dataset and can inform further income-related analyses at the county level.
+
+---
+
+## Conclusion
+
+The *Exploratory Data Analysis (EDA)* phase allowed us to gain critical insights into the distribution of household income across the United States. By analyzing both geographical and income data, we identified the largest states, states with the highest average incomes, and income disparities within specific states. These analyses demonstrate the power of SQL in exploring large datasets and uncovering trends that can inform policy or business decisions.
+
