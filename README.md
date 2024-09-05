@@ -46,7 +46,7 @@ Before performing any analysis, it’s essential to clean and organize the raw d
 2. **Standardizing data**: Ensuring uniformity in columns like `State_Name` and `Place`.
 3. **Checking for Incorrect Values**: Ensuring that the data is free from invalid or incorrect values.
 
-### Example Code Block 1: Removing duplicates
+### Removing duplicates
 
 In this step, I identified and removed duplicate records in the `USHouseholdIncome` table using the following SQL queries:
 
@@ -78,7 +78,7 @@ WHERE row_id IN (SELECT row_id
 
 In this example, I first identified duplicate records by counting occurrences of the id column. Then, I used the ROW_NUMBER() function to locate the duplicate rows and removed them from the USHouseholdIncome table, ensuring no duplicate records remain.
 
-### Example Code Block 2: Standardizing Data
+### Standardizing Data
 
 Ensuring consistency in the dataset is crucial for accurate analysis. The following SQL queries were used to standardize the `State_Name` column in the `USHouseholdIncome` table:
 
@@ -137,7 +137,7 @@ In this step, I first checked for potential errors in the `AWater` column, such 
 
 Once the data cleaning was complete, the next step was to perform *Exploratory Data Analysis (EDA)*. EDA is crucial to understand the dataset, reveal trends, and extract insights related to household income distribution across different states and counties. In this phase, SQL queries were used to explore key aspects such as geographic size, income levels, and income disparities. Here are four key analyses from the EDA phase:
 
-### Example 1: Top 10 Largest States by Area
+### Top 10 Largest States by Area
 
 The first step in the analysis was to examine the largest states by total area (land and water). This allows us to see the geographical distribution across the United States.
 
@@ -156,7 +156,7 @@ This query calculates the total area for each state by summing the land (`ALand`
 
 ---
 
-### Example 2: Top 10 States with the Highest Average Income
+### Top 10 States with the Highest Average Income
 
 Next, we calculated the top 10 states with the highest average income, which helps to understand the economic standing of various states.
 
@@ -178,7 +178,7 @@ This query joins the `USHouseholdIncome` and `USHouseholdIncomeStatistics` table
 
 ---
 
-### Example 3: Top 5 Highest and Lowest Average County Incomes in New Jersey
+### Top 5 Highest and Lowest Average County Incomes in New Jersey
 
 To further explore income distribution, we analyzed the counties in New Jersey with the highest and lowest average incomes. This provides a more granular view of income disparities within a single state.
 
@@ -214,7 +214,7 @@ This query uses `UNION` to combine two sets of data: the top 5 counties in New J
 
 ---
 
-### Example 4: Average Number of Counties per State
+### Average Number of Counties per State
 
 Finally, we looked at the average number of counties per state, which helps us understand the typical administrative divisions across states.
 
